@@ -117,7 +117,7 @@ module Paperclip
               @convert_options[:output][:vf][/\z/] = ',' if @convert_options[:output][:vf]
               @convert_options[:output][:vf] ||= ''
               if pad_y > 0 && rotated.nil?
-                @convert_options[:output][:vf][/\z/] = "scale=#{width}:-1,pad=#{width.to_i}:#{target_height.to_i}:0:#{pad_y}:#@pad_color"
+                @convert_options[:output][:vf][/\z/] = "scale=#{width*2}:-1,crop=#{width.to_i}:#{width.to_i}"
               else
                 @convert_options[:output][:vf][/\z/] = "scale=#{width}:-1,crop=#{width.to_i}:#{width.to_i}"
               end
