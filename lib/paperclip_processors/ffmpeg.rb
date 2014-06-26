@@ -155,7 +155,7 @@ module Paperclip
         @convert_options[:output][:vcodec] = 'libtheora'
         @convert_options[:output][:f] = 'ogg'
       when 'mp4'
-        @convert_options[:output][:acodec] = 'aac'
+        @convert_options[:output][:acodec] = 'copy'
         @convert_options[:output][:strict] = 'experimental'
       end
 
