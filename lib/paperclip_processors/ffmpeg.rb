@@ -88,6 +88,7 @@ module Paperclip
                 # Keep aspect ratio
                 width = target_width.to_i
                 height = (width.to_f / (@meta[:aspect].to_f)).to_i
+                width, height = rotate_if_necessary(width, height)
                 @convert_options[:output][:s] = "#{width.to_i/2*2}x#{height.to_i/2*2}"
                 Ffmpeg.log("Convert Options: #{@convert_options[:output][:s]}") if @whiny
               else
@@ -100,6 +101,7 @@ module Paperclip
                 # Keep aspect ratio
                 width = target_width.to_i
                 height = (width.to_f / (@meta[:aspect].to_f)).to_i
+                width, height = rotate_if_necessary(width, height)
                 @convert_options[:output][:s] = "#{width.to_i/2*2}x#{height.to_i/2*2}"
                 Ffmpeg.log("Convert Options: #{@convert_options[:output][:s]}") if @whiny
               else
@@ -108,6 +110,7 @@ module Paperclip
               end
             elsif @pad_only
               Ffmpeg.log("Pad Only") if @whiny
+              # TODO: check if auto_rotate works correctly
               # Keep aspect ratio
               width = target_width.to_i
               height = (width.to_f / (@meta[:aspect].to_f)).to_i
@@ -127,13 +130,15 @@ module Paperclip
               # Keep aspect ratio
               width = target_width.to_i
               height = (width.to_f / (@meta[:aspect].to_f)).to_i
+              width, height = rotate_if_necessary(width, height)
               @convert_options[:output][:s] = "#{width.to_i/2*2}x#{height.to_i/2*2}"
               Ffmpeg.log("Convert Options: #{@convert_options[:output][:s]}") if @whiny
             end
           else
             Ffmpeg.log("Not Keeping Aspect Ratio") if @whiny
             # Do not keep aspect ratio
-            @convert_options[:output][:s] = "#{target_width.to_i/2*2}x#{target_height.to_i/2*2}"
+            width, height = rotate_if_necessary(target_width, target_height)
+            @convert_options[:output][:s] = "#{width.to_i/2*2}x#{height.to_i/2*2}"
             Ffmpeg.log("Convert Options: #{@convert_options[:output][:s]}") if @whiny
           end
         end
@@ -179,6 +184,10 @@ module Paperclip
       end
 
       dst
+    end
+
+    def rotate_if_necessary width, height
+      (@auto_rotate && [90, 270].include?(@meta[:rotate])) ? [height, width] : [width, height]
     end
     
     def identify
